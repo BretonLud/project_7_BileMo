@@ -22,7 +22,7 @@ class Customer
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['customer:read'])]
+    #[Groups(['customer:read', 'user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -31,7 +31,7 @@ class Customer
         Assert\Length(min: 1, max: 255),
         Assert\Type(type: 'string')
     ]
-    #[Groups(['customer:read', 'customer:write'])]
+    #[Groups(['customer:read', 'customer:write', 'user:read'])]
     private ?string $name = null;
 
     /**
