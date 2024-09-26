@@ -5,9 +5,11 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[UniqueEntity('name')]
 #[ApiResource]
 class Product
 {
@@ -56,6 +58,13 @@ class Product
     private ?string $color = null;
 
     #[ORM\Column]
+    #[
+        Assert\NotBlank(),
+        Assert\Type(
+            type: 'float',
+            message: 'The value {{ value }} is not a valid {{ type }}.',
+        ),
+    ]
     private ?float $price = null;
     
     #[ORM\Column(length: 255)]
@@ -73,7 +82,7 @@ class Product
 
     #[ORM\Column(length: 10000, nullable: true)]
     #[
-        Assert\Type(['type' => 'string'|null]),
+        Assert\Type(['type' => ['string',null]]),
         Assert\Length([
             'max' => 10000,
             'maxMessage' => 'Product description is too long.',
