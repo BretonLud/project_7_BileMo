@@ -47,9 +47,12 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }
-        - { path: ^/api/products, roles: PUBLIC_ACCESS }
+        - { path: ^/api/products, roles: ROLE_USER }
         - { path: ^/api/, roles: ROLE_CUSTOMER }
         - { path: ^/api, roles: PUBLIC_ACCESS }
+
+    role_hierarchy:
+        ROLE_CUSTOMER: ROLE_USER
 
 when@test:
     security:
