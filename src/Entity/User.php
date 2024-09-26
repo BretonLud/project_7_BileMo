@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -12,9 +13,9 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
+use App\State\UserPasswordHasher;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -24,6 +25,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity('email')]
 #[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(validationContext: ['groups' => 'user:write'], processor: UserPasswordHasher::class),
+        new Get(),
+        new Put(processor: UserPasswordHasher::class),
+        new Patch(processor: UserPasswordHasher::class),
+        new Delete(),
+    ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']],
     //security: "is_granted('ROLE_CUSTOMER')",
@@ -42,13 +51,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(min: 1, max: 255),
     ]
     #[Groups(['user:write', 'user:read'])]
+    #[ApiProperty(
+        example: 'user@example.com',
+    )]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read','user:write'])]
     private array $roles = ['ROLE_USER'];
 
     /**
@@ -61,7 +73,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\PasswordStrength(minScore: Assert\PasswordStrength::STRENGTH_MEDIUM)
     ]
     #[Groups(['user:write'])]
-    private ?string $password = null;
+    #[ApiProperty(
+        example: 'Example.1234'
+    )]
+    private string $password;
 
     #[ORM\Column(length: 255)]
     #[
@@ -70,6 +85,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Type('string')
     ]
     #[Groups(['user:write', 'user:read'])]
+    #[ApiProperty(
+        example: 'John'
+    )]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
@@ -79,12 +97,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Type('string')
     ]
     #[Groups(['user:write', 'user:read'])]
+    #[ApiProperty(
+        example: 'Doe'
+    )]
     private ?string $lastname = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['user:write', 'user:read'])]
     #[ApiFilter(SearchFilter::class, properties: ['customer.id'])]
+    #[ApiProperty(
+        example: 'customers/{id}'
+    )]
     private ?Customer $customer = null;
 
     public function getId(): ?int
