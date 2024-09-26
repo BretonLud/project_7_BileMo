@@ -20,7 +20,7 @@ class Product
 
     #[ORM\Column(length: 255)]
     #[
-        Assert\NotBlank(),
+        Assert\NotBlank,
         Assert\Type(['type' => 'string']),
         Assert\Length([
             'max' => 255,
@@ -33,7 +33,7 @@ class Product
     
     #[ORM\Column(length: 255)]
     #[
-        Assert\NotBlank(),
+        Assert\NotBlank,
         Assert\Type(['type' => 'string']),
         Assert\Length([
             'max' => 255,
@@ -46,7 +46,7 @@ class Product
 
     #[ORM\Column(length: 255)]
     #[
-        Assert\NotBlank(),
+        Assert\NotBlank,
         Assert\Type(['type' => 'string']),
         Assert\Length([
             'max' => 255,
@@ -59,7 +59,7 @@ class Product
 
     #[ORM\Column]
     #[
-        Assert\NotBlank(),
+        Assert\NotBlank,
         Assert\Type(
             type: 'float',
             message: 'The value {{ value }} is not a valid {{ type }}.',
@@ -69,7 +69,7 @@ class Product
     
     #[ORM\Column(length: 255)]
     #[
-        Assert\NotBlank(),
+        Assert\NotBlank,
         Assert\Type(['type' => 'string']),
         Assert\Length([
             'max' => 255,
