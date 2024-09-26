@@ -2,18 +2,32 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity('email')]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['user:read']],
+    denormalizationContext: ['groups' => ['user:write']],
+    //security: "is_granted('ROLE_CUSTOMER')",
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -27,12 +41,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Email,
         Assert\Length(min: 1, max: 255),
     ]
+    #[Groups(['user:write', 'user:read'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private array $roles = ['ROLE_USER'];
 
     /**
@@ -44,6 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(min: 1, max: 255),
         Assert\PasswordStrength(minScore: Assert\PasswordStrength::STRENGTH_MEDIUM)
     ]
+    #[Groups(['user:write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
@@ -52,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(min: 1, max: 255),
         Assert\Type('string')
     ]
+    #[Groups(['user:write', 'user:read'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
@@ -60,7 +78,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(min: 1, max: 255),
         Assert\Type('string')
     ]
+    #[Groups(['user:write', 'user:read'])]
     private ?string $lastname = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['user:write', 'user:read'])]
+    #[ApiFilter(SearchFilter::class, properties: ['customer.id'])]
+    private ?Customer $customer = null;
 
     public function getId(): ?int
     {
@@ -157,6 +182,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastname(string $lastname): static
     {
         $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getCustomer(): ?Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?Customer $customer): static
+    {
+        $this->customer = $customer;
 
         return $this;
     }
