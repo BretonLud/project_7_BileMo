@@ -10,7 +10,7 @@ class UserService
     {
     }
     
-    public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null)
+    public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null) : array
     {
         return $this->userRepository->findBy($criteria, $orderBy, $limit, $offset);
     }
