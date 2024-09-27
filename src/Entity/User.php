@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
+use App\State\UserCollectionProvider;
 use App\State\UserPasswordHasher;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -26,8 +27,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email')]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Post(validationContext: ['groups' => 'user:write'], processor: UserPasswordHasher::class),
+        new GetCollection(provider: UserCollectionProvider::class),
+        new Post(security: "is_granted('USER_POST', object)", validationContext: ['groups' => 'user:write'], processor: UserPasswordHasher::class),
         new Get(security: "is_granted('USER_ACCESS', object)"),
         new Put(security: "is_granted('USER_ACCESS', object)", processor: UserPasswordHasher::class),
         new Patch(security: "is_granted('USER_ACCESS', object)", processor: UserPasswordHasher::class),
@@ -106,7 +107,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:write', 'user:read'])]
     #[ApiFilter(SearchFilter::class, properties: ['customer.id'])]
     #[ApiProperty(
-        example: 'customers/{id}'
+        example: 'api/customers/{id}'
     )]
     private ?Customer $customer = null;
 
