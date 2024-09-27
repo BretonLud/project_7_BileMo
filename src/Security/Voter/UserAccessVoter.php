@@ -7,7 +7,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class UserVoter extends Voter
+class UserAccessVoter extends Voter
 {
     public const ACCESS = 'USER_ACCESS';
     
@@ -25,7 +25,7 @@ class UserVoter extends Voter
     {
         $currentUser = $token->getUser();
         $user = $subject;
-        
+       
         if (!$currentUser instanceof User) {
             return false;
         }
@@ -37,7 +37,7 @@ class UserVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-       
+        
         $currentUserCustomer = $currentUser->getCustomer();
         $userCustomer = $user->getCustomer();
         
