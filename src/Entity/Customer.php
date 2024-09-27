@@ -15,7 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('name')]
 #[ApiResource(
     normalizationContext: ['groups' => ['customer:read']],
-    denormalizationContext: ['groups' => ['customer:write']]
+    denormalizationContext: ['groups' => ['customer:write']],
+    security: "is_granted('ROLE_ADMIN')",
 )]
 class Customer
 {
