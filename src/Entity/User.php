@@ -28,14 +28,13 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection(),
         new Post(validationContext: ['groups' => 'user:write'], processor: UserPasswordHasher::class),
-        new Get(),
-        new Put(processor: UserPasswordHasher::class),
-        new Patch(processor: UserPasswordHasher::class),
-        new Delete(),
+        new Get(security: "is_granted('USER_ACCESS', object)"),
+        new Put(security: "is_granted('USER_ACCESS', object)", processor: UserPasswordHasher::class),
+        new Patch(security: "is_granted('USER_ACCESS', object)", processor: UserPasswordHasher::class),
+        new Delete(security: "is_granted('USER_ACCESS', object)"),
     ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']],
-    //security: "is_granted('ROLE_CUSTOMER')",
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -50,7 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Email,
         Assert\Length(min: 1, max: 255),
     ]
-    #[Groups(['user:write', 'user:read'])]
+    #[Groups(['user:write', 'user:read', 'customer:read'])]
     #[ApiProperty(
         example: 'user@example.com',
     )]
@@ -60,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['user:read','user:write'])]
+    #[Groups(['user:read','user:write', 'customer:read'])]
     private array $roles = ['ROLE_USER'];
 
     /**
@@ -84,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(min: 1, max: 255),
         Assert\Type('string')
     ]
-    #[Groups(['user:write', 'user:read'])]
+    #[Groups(['user:write', 'user:read', 'customer:read'])]
     #[ApiProperty(
         example: 'John'
     )]
@@ -96,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         Assert\Length(min: 1, max: 255),
         Assert\Type('string')
     ]
-    #[Groups(['user:write', 'user:read'])]
+    #[Groups(['user:write', 'user:read', 'customer:read'])]
     #[ApiProperty(
         example: 'Doe'
     )]

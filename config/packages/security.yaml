@@ -53,6 +53,7 @@ security:
 
     role_hierarchy:
         ROLE_CUSTOMER: ROLE_USER
+        ROLE_ADMIN: ROLE_CUSTOMER
 
 when@test:
     security:
