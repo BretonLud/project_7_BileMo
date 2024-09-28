@@ -5,13 +5,20 @@ namespace App\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\Entity\User;
+use App\Service\CustomerService;
 use App\Service\UserService;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 readonly class UserCollectionProvider implements ProviderInterface
 {
     
-    public function __construct(private Security $security, private UserService $userService)
+    public function __construct(
+        private Security $security,
+        private UserService $userService,
+        private RequestStack $requestStack,
+        private CustomerService $customerService,
+    )
     {
     }
     
@@ -23,16 +30,21 @@ readonly class UserCollectionProvider implements ProviderInterface
         if (!$currentUser instanceof User) {
             return [];
         }
-        
         // Récupère le Customer de l'utilisateur actuellement connecté
-        $currentUserCustomer = $currentUser->getCustomer();
-        
-        $criteria = ['customer' => $currentUserCustomer];
-        
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            $criteria = [];
+        $customer = $currentUser->getCustomer();
+        $request = $this->requestStack->getCurrentRequest();
+        // Paramètres de pagination
+        $limit = $request->query->getInt('limit', 30);
+        $page = $request->query->getInt('page', 1);
+        $offset = ($page - 1) * $limit;
+ 
+        if ($this->security->isGranted('ROLE_ADMIN') and $request->query->getInt('customer')) {
+            $customer = $this->customerService->find($request->query->getInt('customer'));
+        } elseif ($this->security->isGranted('ROLE_ADMIN'))
+        {
+            $customer = null;
         }
         
-        return $this->userService->findBy($criteria);
+        return $this->userService->findByCustomer($customer,[],$limit, $offset);
     }
 }
