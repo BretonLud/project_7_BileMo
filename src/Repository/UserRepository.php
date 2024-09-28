@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use ApiPlatform\Doctrine\Orm\Paginator;
+use App\Entity\Customer;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -31,5 +33,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+    
+    public function findByCustomer(?Customer $customer, array $order, int $limit, float|int $offset)
+    {
+        $query = $this->createQueryBuilder('u')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+        
+        if ($customer) {
+            $query->where('u.customer = :customer')
+                ->setParameter('customer', $customer);
+        }
+        
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
+        $paginatorApi = new Paginator($paginator);
+        
+        return $paginatorApi;
     }
 }
