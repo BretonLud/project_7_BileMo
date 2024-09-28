@@ -2,7 +2,9 @@
 
 namespace App\Service;
 
+use App\Entity\Customer;
 use App\Repository\UserRepository;
+use Cassandra\Custom;
 
 class UserService
 {
@@ -13,5 +15,10 @@ class UserService
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null) : array
     {
         return $this->userRepository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+    
+    public function findByCustomer(?Customer $customer, array $order = [], int $limit = 30, float|int $offset = 0)
+    {
+        return $this->userRepository->findByCustomer($customer, $order, $limit, $offset);
     }
 }
