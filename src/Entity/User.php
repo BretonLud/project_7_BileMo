@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
@@ -31,7 +30,6 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(security: "is_granted('USER_POST', object)", validationContext: ['groups' => 'user:write'], processor: UserPasswordHasher::class),
         new Get(security: "is_granted('USER_ACCESS', object)"),
         new Put(security: "is_granted('USER_ACCESS', object)", processor: UserPasswordHasher::class),
-        new Patch(security: "is_granted('USER_ACCESS', object)", processor: UserPasswordHasher::class),
         new Delete(security: "is_granted('USER_ACCESS', object)"),
     ],
     normalizationContext: ['groups' => ['user:read']],
@@ -105,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['user:write', 'user:read'])]
-    #[ApiFilter(SearchFilter::class, properties: ['customer.id'])]
+    #[ApiFilter(SearchFilter::class, properties: ['customer'])]
     #[ApiProperty(
         example: 'api/customers/{id}'
     )]
