@@ -59,7 +59,7 @@ class AppFixtures extends Fixture
             $manager->persist($product);
         }
         
-        for($i = 0; $i < 25; $i++) {
+        for($i = 0; $i < 100; $i++) {
             
             $user = new User();
             switch ($i)
@@ -74,6 +74,17 @@ class AppFixtures extends Fixture
                         'admin'
                     ));
                     $user->setRoles(['ROLE_ADMIN']);
+                    break;
+                case 2;
+                    $user->setLastname('client');
+                    $user->setFirstname('client');
+                    $user->setEmail('client@example.com');
+                    $user->setCustomer($customers[array_rand($customers)]);
+                    $user->setPassword($this->passwordHasher->hashPassword(
+                        $user,
+                        'client'
+                    ));
+                    $user->setRoles(['ROLE_CUSTOMER']);
                     break;
                 default;
                     $user->setLastname($faker->lastName);
