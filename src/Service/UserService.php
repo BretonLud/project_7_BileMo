@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
+use ApiPlatform\Doctrine\Orm\Paginator;
 use App\Entity\Customer;
 use App\Repository\UserRepository;
-use Cassandra\Custom;
 
 class UserService
 {
@@ -17,7 +17,7 @@ class UserService
         return $this->userRepository->findBy($criteria, $orderBy, $limit, $offset);
     }
     
-    public function findByCustomer(?Customer $customer, array $order = [], int $limit = 30, float|int $offset = 0)
+    public function findByCustomer(?Customer $customer, array $order = [], int $limit = 30, float|int $offset = 0): Paginator
     {
         return $this->userRepository->findByCustomer($customer, $order, $limit, $offset);
     }
