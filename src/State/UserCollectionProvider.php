@@ -38,7 +38,7 @@ readonly class UserCollectionProvider implements ProviderInterface
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * $limit;
  
-        if ($this->security->isGranted('ROLE_ADMIN') and $request->query->getInt('customer')) {
+        if ($this->security->isGranted('ROLE_ADMIN') && $request->query->getInt('customer')) {
             $customer = $this->customerService->find($request->query->getInt('customer'));
         } elseif ($this->security->isGranted('ROLE_ADMIN'))
         {
