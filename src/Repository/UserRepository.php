@@ -35,7 +35,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
     
-    public function findByCustomer(?Customer $customer, array $order, int $limit, float|int $offset)
+    public function findByCustomer(?Customer $customer, array $order, int $limit, float|int $offset): Paginator
     {
         $query = $this->createQueryBuilder('u')
             ->setMaxResults($limit)
@@ -47,8 +47,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
         
         $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query);
-        $paginatorApi = new Paginator($paginator);
-        
-        return $paginatorApi;
+        return new Paginator($paginator);
     }
 }
