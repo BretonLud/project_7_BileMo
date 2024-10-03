@@ -7,8 +7,8 @@ done
 
 php bin/console cache:clear
 chown -R www-data:www-data /var/www/var
-
-php bin/console lexik:jwt:generate-keypair --skip-if-exists
+composer install --no-scripts --no-interaction
+php bin/console lexik:jwt:generate-keypair
 
 # Une fois la migration réussie, démarrez php-fpm
 php-fpm
