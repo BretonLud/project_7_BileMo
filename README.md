@@ -33,7 +33,7 @@ Param√©trer les variables d'environnement avec vos informations: (le smtp param√
 MARIADB_USER=username
 MARIADB_PASSWORD=password
 MARIADB_ROOT_PASSWORD=root
-DATABASE_URL="mysql://username:password@database:3306/bilemo
+DATABASE_URL="mysql://username:password@database:3306/bilemo"
 ```
 
 Lancer les containers docker avec les 2 commandes suivantes :
