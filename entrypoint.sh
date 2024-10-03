@@ -1,3 +1,5 @@
+composer install
+
 # Boucle pour exécuter la migration jusqu'à ce qu'elle se termine avec succès
 while true; do
   php bin/console d:m:m --no-interaction && break
@@ -7,7 +9,7 @@ done
 
 php bin/console cache:clear
 chown -R www-data:www-data /var/www/var
-composer install --no-scripts --no-interaction
+
 php bin/console lexik:jwt:generate-keypair
 
 # Une fois la migration réussie, démarrez php-fpm
