@@ -55,4 +55,17 @@ Vous avez accès site sur l'adresse suivante :
 localhost:8888/api
 ```
 
+Vous avez accès à 2 comptes : 
+
+```
+email: admin@example.com
+password: admin
+
+et 
+
+email: client@example.com
+password: client
+
+```
+
 Amusez vous ensuite :)
