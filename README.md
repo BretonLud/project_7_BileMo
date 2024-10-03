@@ -24,7 +24,7 @@ cd project_7_BileMo
 Créer un fichier la racine du projet .env.local
 
 ```
-touch .env.local
+nano .env.local
 ```
 
 Paramétrer les variables d'environnement avec vos informations: (le smtp paramétré est celui de MailHog)
