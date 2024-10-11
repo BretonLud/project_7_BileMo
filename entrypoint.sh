@@ -1,3 +1,5 @@
+#!/bin/bash
+
 composer install
 
 # Boucle pour exécuter la migration jusqu'à ce qu'elle se termine avec succès
