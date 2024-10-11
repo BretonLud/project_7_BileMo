@@ -3,6 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -10,7 +15,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[UniqueEntity('name')]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Get(),
+        new Put(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')"),
+    ],
+)]
 class Product
 {
     #[ORM\Id]
